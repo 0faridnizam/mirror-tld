@@ -7,13 +7,13 @@ on:
   workflow_dispatch:
 
 jobs:
-  update-list-and-push-to-github:
+  update-and-push-to-github:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v2
 
-      # Specific area
+      #
       - name: AdGuard Russian Filter
         uses: carlosperate/download-file-action@v1.0.3
         with:
@@ -21,8 +21,7 @@ jobs:
           file-name: 'tlds-alpha-by-domain.txt'
           location: './output'
           
-      #Commit
-
+      #
       - name: Commit Updates
         run: |
           if [ -z "$(git status --porcelain)" ]; then
@@ -33,7 +32,15 @@ jobs:
               git config --local user.name "yuimatcha"
               git commit -m "Update tld at $(date)" -a
             fi
+      #
       - name: Push to GitHub
         uses: ad-m/github-push-action@v0.6.0
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
+      #
+      - name: Create a GitHub release
+        uses: ncipollo/release-action@v1
+        with:
+          tag: ${{ steps.tag_version.outputs.new_tag }}
+          name: Release ${{ steps.tag_version.outputs.new_tag }}
+          body: ${{ steps.tag_version.outputs.changelog }}

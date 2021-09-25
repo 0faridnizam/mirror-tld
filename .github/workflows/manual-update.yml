@@ -1,0 +1,39 @@
+name: Manual Update tld
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+  workflow_dispatch:
+
+jobs:
+  update-list-and-push-to-github:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      # Specific area
+      - name: AdGuard Russian Filter
+        uses: carlosperate/download-file-action@v1.0.3
+        with:
+          file-url: 'https://data.iana.org/TLD/tlds-alpha-by-domain.txt'
+          file-name: 'tlds-alpha-by-domain.txt'
+          location: './output'
+          
+      #Commit
+
+      - name: Commit Updates
+        run: |
+          if [ -z "$(git status --porcelain)" ]; then
+              exit 0
+            else
+              git add .
+              git config --local user.email "29797712+yuimatcha@users.noreply.github.com"
+              git config --local user.name "yuimatcha"
+              git commit -m "Update tld at $(date)" -a
+            fi
+      - name: Push to GitHub
+        uses: ad-m/github-push-action@v0.6.0
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}

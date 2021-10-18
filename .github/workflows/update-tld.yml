@@ -5,7 +5,7 @@ on:
   #pull_request:
     #branches: [ master ]
   schedule:
-    - cron: '0 0 * * *'
+    - cron: '0 0 * * 2'
 
 jobs:
   update-and-push-to-github:
@@ -20,16 +20,16 @@ jobs:
           file-url: 'https://data.iana.org/TLD/tlds-alpha-by-domain.txt'
           file-name: 'tlds-alpha-by-domain.txt'
           location: './output'
-      # Commit
+      # Commit Updates
       - name: Commit Updates
         run: |
           if [ -z "$(git status --porcelain)" ]; then
               exit 0
             else
               git add .
-              git config --local user.email "29797712+yuimatcha@users.noreply.github.com"
-              git config --local user.name "yuimatcha"
-              git commit -m "Update tld at $(date)" -a
+              git config --local user.email "29797712+faridnizam@users.noreply.github.com"
+              git config --local user.name "faridnizam"
+              git commit -m "📌 Update TLD at $(date)" -a
             fi
       # Push to github
       - name: Push to GitHub
